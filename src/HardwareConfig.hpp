@@ -26,7 +26,7 @@ constexpr SegmentPins segmentPin = {
     .E = GPIO_NUM_4,    // bottom-left
     .F = GPIO_NUM_9,    // top-left
     .G = GPIO_NUM_8,    // middle
-    .dot = GPIO_NUM_NC, // decimal point
+    .dot = GPIO_NUM_15, // decimal point
 };
 
 struct LedPins
@@ -65,39 +65,28 @@ constexpr int digitActivatorActiveLevel = 0;
 constexpr int digitActivatorInactiveLevel = 1;
 
 constexpr gpio_num_t segmentPins[] = {
-    segmentPin.A, // 0b00000001
-    segmentPin.B, // 0b00000010
-    segmentPin.C, // 0b00000100
-    segmentPin.D, // 0b00001000
-    segmentPin.E, // 0b00010000
-    segmentPin.F, // 0b00100000
-    segmentPin.G, // 0b01000000
+    segmentPin.A,   // 0b00000001
+    segmentPin.B,   // 0b00000010
+    segmentPin.C,   // 0b00000100
+    segmentPin.D,   // 0b00001000
+    segmentPin.E,   // 0b00010000
+    segmentPin.F,   // 0b00100000
+    segmentPin.G,   // 0b01000000
+    segmentPin.dot, // 0b10000000
 };
 
 constexpr uint8_t segmentPinCount = sizeof(segmentPins) / sizeof(segmentPins[0]);
 constexpr int segmentActiveLevel = 0;
 constexpr int segmentInactiveLevel = 1;
 
-constexpr uint32_t noValueAnimationPeriodMs = 100;
+constexpr uint32_t noValueAnimationPeriodMs = 500;
 constexpr uint8_t noValueDigit1AnimationSteps[] = {
-    bit(SegA) | bit(SegB),
-    bit(SegB) | bit(SegG),
-    bit(SegG) | bit(SegE),
-    bit(SegE) | bit(SegD),
-    bit(SegD) | bit(SegC),
-    bit(SegC) | bit(SegG),
-    bit(SegG) | bit(SegF),
-    bit(SegF) | bit(SegA),
+    bit(SegG),
+    0x00000000,
 };
 constexpr uint8_t noValueDigit2AnimationSteps[] = {
-    bit(SegA) | bit(SegF),
-    bit(SegF) | bit(SegG),
-    bit(SegG) | bit(SegC),
-    bit(SegC) | bit(SegD),
-    bit(SegD) | bit(SegE),
-    bit(SegE) | bit(SegG),
-    bit(SegG) | bit(SegB),
-    bit(SegB) | bit(SegA),
+    0x00000000,
+    bit(SegG),
 };
 
 constexpr const uint8_t *noValueAnimationSteps[] = {
@@ -142,7 +131,7 @@ struct TrafficLightDelaysTicks
 };
 
 constexpr TrafficLightDelaysTicks trafficLightDelayTicks = {
-    .Red = 10,
+    .Red = 15,
     .RedAndYellow = 3,
     .Green = 10,
     .GreenBlink = 3,
@@ -150,6 +139,6 @@ constexpr TrafficLightDelaysTicks trafficLightDelayTicks = {
 };
 
 constexpr uint32_t trafficLightHalfTickMs = 500;
-constexpr uint8_t trafficLightMaxVisibleCounter = 99;
+constexpr uint8_t trafficLightMaxVisibleCounter = 10;
 
 #endif

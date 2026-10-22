@@ -67,8 +67,8 @@ void updateDigitPatterns(uint16_t halfTicks)
     {
     case Counter:
     {
-        const uint8_t tens = halfTicks / 2 / 10;
-        const uint8_t seconds = halfTicks / 2 % 10;
+        const uint8_t tens = (halfTicks + 1) / 2 / 10;
+        const uint8_t seconds = (halfTicks + 1) / 2 % 10;
         digitPattern[0] = digits[tens];
         digitPattern[1] = halfTicks % 2 == 0 ? digits[seconds] | bit(Dot) : digits[seconds];
     }
@@ -90,7 +90,7 @@ void updateDigitPatterns(uint16_t halfTicks)
     case Nothing:
     {
         digitPattern[0] = 0b00000000;
-        digitPattern[1] = 0b00000000;
+        digitPattern[1] = halfTicks % 2 == 0 ? bit(Dot) : 0b00000000;
     }
     break;
     default:
@@ -110,7 +110,7 @@ void updateStateMachine()
         trafficLightLed.Yellow.set(LedState::Off);
         trafficLightLed.Green.set(LedState::Off);
 
-        if (halfTicks <= trafficLightDelayTicks.Red * 2)
+        if (halfTicks < trafficLightDelayTicks.Red * 2)
         {
             const uint16_t halfTicksLeft = trafficLightDelayTicks.Red * 2 - halfTicks;
             handleDigitModeForCounter(halfTicksLeft);
@@ -127,7 +127,7 @@ void updateStateMachine()
         trafficLightLed.Yellow.set(LedState::On);
         trafficLightLed.Green.set(LedState::Off);
 
-        if (halfTicks <= (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow) * 2)
+        if (halfTicks < (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow) * 2)
         {
             handleDigitModeForNothing();
             updateDigitPatterns(halfTicks);
@@ -143,7 +143,7 @@ void updateStateMachine()
         trafficLightLed.Yellow.set(LedState::Off);
         trafficLightLed.Green.set(LedState::On);
 
-        if (halfTicks <= (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow + trafficLightDelayTicks.Green) * 2)
+        if (halfTicks < (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow + trafficLightDelayTicks.Green) * 2)
         {
             const uint16_t halfTicksPassed = halfTicks - (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow) * 2;
             const uint16_t greenHalfTicksLeft = trafficLightDelayTicks.Green * 2 - halfTicksPassed;
@@ -161,17 +161,17 @@ void updateStateMachine()
         trafficLightLed.Yellow.set(LedState::Off);
         if (halfTicks % 2 == 0)
         {
-            trafficLightLed.Green.set(LedState::On);
+            trafficLightLed.Green.set(LedState::Off);
         }
         else
         {
-            trafficLightLed.Green.set(LedState::Off);
+            trafficLightLed.Green.set(LedState::On);
         }
 
         handleDigitModeForNothing();
         updateDigitPatterns(halfTicks);
 
-        if (halfTicks <= (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow + trafficLightDelayTicks.Green + trafficLightDelayTicks.GreenBlink) * 2)
+        if (halfTicks < (trafficLightDelayTicks.Red + trafficLightDelayTicks.RedAndYellow + trafficLightDelayTicks.Green + trafficLightDelayTicks.GreenBlink) * 2)
         {
             break;
         }
