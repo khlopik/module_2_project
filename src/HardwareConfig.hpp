@@ -37,9 +37,9 @@ struct LedPins
 };
 
 constexpr LedPins ledPin = {
-    .Red = GPIO_NUM_NC,
-    .Yellow = GPIO_NUM_NC,
-    .Green = GPIO_NUM_NC,
+    .Red = GPIO_NUM_48,
+    .Yellow = GPIO_NUM_47,
+    .Green = GPIO_NUM_21,
 };
 
 enum Segment : uint8_t
@@ -50,7 +50,8 @@ enum Segment : uint8_t
     SegD,
     SegE,
     SegF,
-    SegG
+    SegG,
+    Dot,
 };
 constexpr uint8_t bit(Segment s) { return 1u << s; }
 
@@ -126,7 +127,7 @@ constexpr uint32_t digitScanIntervalUs = 4000;
 
 constexpr uint32_t superloopYieldDelayMs = 10;
 
-struct TrafficLightDelaysMs
+struct TrafficLightDelaysTicks
 {
     uint32_t Red;
     uint32_t RedAndYellow;
@@ -140,14 +141,15 @@ struct TrafficLightDelaysMs
     }
 };
 
-constexpr TrafficLightDelaysMs trafficLightDelayMs = {
-    .Red = 120000,
-    .RedAndYellow = 3000,
-    .Green = 30000,
-    .GreenBlink = 3000,
-    .Yellow = 3000,
+constexpr TrafficLightDelaysTicks trafficLightDelayTicks = {
+    .Red = 10,
+    .RedAndYellow = 3,
+    .Green = 10,
+    .GreenBlink = 3,
+    .Yellow = 3,
 };
 
-constexpr uint32_t trafficLightUpdatePeriodMs = 1000;
+constexpr uint32_t trafficLightHalfTickMs = 500;
+constexpr uint8_t trafficLightMaxVisibleCounter = 99;
 
 #endif

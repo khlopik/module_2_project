@@ -9,7 +9,8 @@
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 static volatile bool digitSwitchPending = false;
 static volatile uint8_t animationCounter = 0;
-static volatile uint8_t trafficLightSecondsCounter = 0;
+static volatile uint16_t trafficLightHalfTickCounter = 0;
+static bool animationTimerRunning = false;
 
 bool consumeDigitSwitchRequest()
 {
@@ -31,9 +32,9 @@ uint8_t consumeAnimationStepRequest()
     return count;
 }
 
-uint8_t getTrafficLightSecondsCounter()
+uint16_t getTrafficLightHalfPeriodCounter()
 {
-    return trafficLightSecondsCounter;
+    return trafficLightHalfTickCounter;
 }
 
 
@@ -60,7 +61,7 @@ static bool IRAM_ATTR noValueAnimationTimerCallback(gptimer_handle_t timer, cons
 static bool IRAM_ATTR trafficLightTimerCallback(gptimer_handle_t timer, const gptimer_alarm_event_data_t *edata, void *user_ctx)
 {
     portENTER_CRITICAL_ISR(&timerMux);
-    trafficLightSecondsCounter = (trafficLightSecondsCounter + 1) % trafficLightDelayMs.total();
+    trafficLightHalfTickCounter = (trafficLightHalfTickCounter + 1) % (trafficLightDelayTicks.total() * 2);
     portEXIT_CRITICAL_ISR(&timerMux);
     return false;
 }
@@ -93,7 +94,7 @@ gptimer_alarm_config_t noValueAnimationTimerAlarmConfig = {
 };
 
 gptimer_alarm_config_t trafficLightTimerAlarmConfig = {
-    .alarm_count = trafficLightUpdatePeriodMs * 1000ULL,
+    .alarm_count = trafficLightHalfTickMs * 1000ULL,
     .reload_count = 0,
     .flags = {
         .auto_reload_on_alarm = true,
@@ -131,11 +132,24 @@ void timerInit()
     ESP_ERROR_CHECK(gptimer_enable(trafficLightTimer));
 
     ESP_ERROR_CHECK(gptimer_start(digitSwitchTimer));
-    ESP_ERROR_CHECK(gptimer_enable(trafficLightTimer));
+    ESP_ERROR_CHECK(gptimer_start(trafficLightTimer));
     
 }
 
 void startNoValueAnimationTimer()
 {
+    if (animationTimerRunning) return;
+
+    animationCounter = 0;
+    gptimer_set_raw_count(noValueAnimationTimer, 0);
     ESP_ERROR_CHECK(gptimer_start(noValueAnimationTimer));
+    animationTimerRunning = true;
+}
+
+void stopNoValueAnimationTimer()
+{
+    if (animationTimerRunning == false) return;
+
+    ESP_ERROR_CHECK(gptimer_stop(noValueAnimationTimer));
+    animationTimerRunning = false;
 }
