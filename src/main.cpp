@@ -213,7 +213,7 @@ extern "C" void app_main()
     {
         updateStateMachine();
 
-        if (consumeReadPothRequest()) {
+        if (consumeReadPotRequest()) {
             updateSpeed();
         }
 

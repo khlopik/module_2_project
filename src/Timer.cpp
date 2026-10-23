@@ -23,7 +23,7 @@ bool consumeDigitSwitchRequest()
     return digitSwitch;
 }
 
-bool consumeReadPothRequest()
+bool consumeReadPotRequest()
 {
     portENTER_CRITICAL(&timerMux);
     const bool readPot = readPotPending;

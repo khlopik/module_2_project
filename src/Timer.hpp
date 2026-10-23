@@ -5,7 +5,7 @@
 
 void timerInit();
 bool consumeDigitSwitchRequest();
-bool consumeReadPothRequest();
+bool consumeReadPotRequest();
 uint8_t consumeAnimationStepRequest();
 uint16_t getTrafficLightHalfPeriodCounter();
 void startNoValueAnimationTimer();
