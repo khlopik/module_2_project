@@ -2,6 +2,7 @@
 #include "Timer.hpp"
 #include "Led.hpp"
 #include "HardwareConfig.hpp"
+#include "Pot.hpp"
 #include "freertos/FreeRTOS.h"
 #include "esp_log.h"
 
@@ -202,7 +203,6 @@ void updateStateMachine()
 
 extern "C" void app_main()
 {
-    ESP_LOGI("Version", "%ld", __cplusplus);
     gpioInit();
     timerInit();
     trafficLightLed.Red.init(ledPin.Red);
@@ -213,9 +213,12 @@ extern "C" void app_main()
     {
         updateStateMachine();
 
+        if (consumeReadPothRequest()) {
+            updateSpeed();
+        }
+
         if (consumeDigitSwitchRequest())
         {
-            // ESP_LOGI("ActiveDigit", "%d", activeDigit);
             turnOffDigits();
             showSegments(digitPattern[activeDigit]);
             activateDigit(activeDigit);

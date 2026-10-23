@@ -7,5 +7,6 @@ void gpioInit();
 void turnOffDigits();
 void activateDigit(uint8_t digit);
 void showSegments(uint8_t mask);
+uint16_t readPotValue();
 
 #endif

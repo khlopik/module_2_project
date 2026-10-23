@@ -6,6 +6,8 @@
 constexpr gpio_num_t firstDigitActivatorPin = GPIO_NUM_1;
 constexpr gpio_num_t secondDigitActivatorPin = GPIO_NUM_2;
 
+constexpr gpio_num_t potPin = GPIO_NUM_16;
+
 struct SegmentPins
 {
     gpio_num_t A;
@@ -79,14 +81,18 @@ constexpr uint8_t segmentPinCount = sizeof(segmentPins) / sizeof(segmentPins[0])
 constexpr int segmentActiveLevel = 0;
 constexpr int segmentInactiveLevel = 1;
 
-constexpr uint32_t noValueAnimationPeriodMs = 500;
+constexpr uint32_t noValueAnimationPeriodMs = 250;
 constexpr uint8_t noValueDigit1AnimationSteps[] = {
     bit(SegG),
+    0x00000000,
+    0x00000000,
     0x00000000,
 };
 constexpr uint8_t noValueDigit2AnimationSteps[] = {
     0x00000000,
+    0x00000000,
     bit(SegG),
+    0x00000000,
 };
 
 constexpr const uint8_t *noValueAnimationSteps[] = {
@@ -140,5 +146,14 @@ constexpr TrafficLightDelaysTicks trafficLightDelayTicks = {
 
 constexpr uint32_t trafficLightHalfTickMs = 500;
 constexpr uint8_t trafficLightMaxVisibleCounter = 10;
+
+constexpr uint16_t readPotUpdateMs = 50;
+
+constexpr uint8_t movAvgValuesCount = 8;
+constexpr uint8_t potThresholdToUpdatePercent = 10;
+constexpr uint16_t maxSpeedRawValue = 4096;
+constexpr uint8_t minSpeedValue = 10; // x1 with 
+constexpr uint8_t maxSpeedValue = 50; // x5
+constexpr uint8_t speedDecimalsDivider = 10;
 
 #endif
